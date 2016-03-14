@@ -1,0 +1,28 @@
+<html>
+<head>
+<script src="https://cdn.rawgit.com/calipho-sib/nextprot-js/v0.0.54/dist/nextprot.bundle.js"></script>
+</head>
+  <script type="text/javascript">
+      
+ var applicationName = 'expression-viewer';
+ var clientInfo='Aditi GSOC';
+ 
+ var nx = new Nextprot.Client(applicationName, clientInfo);
+
+
+nx.getAnnotationsByCategory('NX_P38398',"expression-profile").then(function (data){
+    for(var i=0;i<data.annot.length;i++){
+document.write(data.annot[i].cvTermName,"&nbsp &nbsp &nbsp &nbsp "); 
+   for(var j=0;j<data.annot[i].evidences.length;j++){   
+    document.write(data.annot[i].evidences[j].expressionLevel,"&nbsp ");
+ } 
+
+    document.write("<br>");} 
+});
+
+      
+  </script>
+
+
+</script>
+</html>
