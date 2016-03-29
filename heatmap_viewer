@@ -1,0 +1,154 @@
+<html>
+
+<head>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
+  <script>
+    $(document).ready(function() {
+      $("#flip").click(function() {
+        $("#panel").slideToggle("slow");
+      });
+    });
+  </script>
+
+  <style>
+    #panel,
+    #flip {
+      padding: 5px;
+      text-align: center;
+      background-color: #e5eecc;
+      border: solid 1px #c3c3c3;
+    }
+    
+    #panel {
+      padding: 50px;
+      display: none;
+    }
+    
+    .vertical {
+      transform: rotate(-45);
+      transform: rotate(-45deg);
+      transform-origin: left top 0;
+      white-space: nowrap;
+      font-size: 0.8em;
+      padding-top: 60px;
+      padding-right: 20px;
+    }
+    
+    .round1 {
+      color: blue;
+    }
+    
+    .circleuQ3 {
+      background-color: #C00000;
+    }
+    
+    .circlemQ1 {
+      background-color: #0070C0;
+    }
+    
+    .circleuQ1 {
+      background-color: rgb(185, 205, 229);
+    }
+    
+    .bodymapcircle {
+      width: 10px;
+      height: 10px;
+      -webkit-border-radius: 5px;
+      -moz-border-radius: 5px;
+      border-radius: 5px;
+      margin: 3px;
+    }
+    
+    .circleNA {
+      background-color: lightgrey;
+    }
+    
+    .padding1 {
+      padding-left: 30px;
+    }
+    
+    .icon-plus {
+      background-position: 0px 0px;
+      background-image: url('http://vumondo-intro.appspot.com/images/glyphicons_432_plus.png');
+      display: inline-block;
+      width: 12px;
+      height: 12px;
+      margin-top: 1px;
+      line-height: 8px;
+      vertical-align: text-top;
+    }
+  </style>
+</head>
+
+<body>
+
+  <script type="text/javascript">
+    $(document).ready(function() {
+      $("#flip").click(function() {
+        $("#panel").slideToggle("slow");
+      });
+    });
+    var visited = [];
+    var jsonURL = 'http://gist.githubusercontent.com/ddtxra/ad7f3c159ef68c73a73a/raw/41597dc99d48804d924df764078d2153d9a8ff5f/data.json';
+    $.get(jsonURL).done(function(body) {
+      var data = JSON.parse(body).data;
+      var response = parseJSON(data);
+
+      //Putting the header in the table
+      $("body").append("<table><tbody><tr><th class='padding1'>Name&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</th><th class='vertical'>Microarray</th>&nbsp;&nbsp;<th class='vertical'>IHC</th></tr>");
+      for (var k = 1; k < response.length; k++) {
+        //appending the responses obtained from the parseJSON function in the body tag
+        $("body").append(response[k]);
+      }
+      $("body").append("</tbody></table>");
+    });
+    //parseJSON function to parse the json which is obtained
+    //All the variables defined are in camelcase
+    function parseJSON(data) {
+      var result = [];
+      var rowData = "";
+      for (var i = 0; i < data.length; i++) {
+        var element = data[i];
+        if ((visited[visited.length - 1]) != element.rowLabel) {
+          //visited array is a precaution taken so that the value is not repeated if once traversed
+          visited.push(element.rowLabel);
+         
+          var values = element.values;
+          var children = element.children;
+         
+          var columnData = "";
+          //Printing all the values in an element(in this case Microarray and IHC and their values)
+          for (var j = 0; j < values.length; j++) {
+            var labelValue = values[j];
+            //columnData += ("</td><td class='round1'>" + labelValue.columnLabel + ": </td>");
+            if (labelValue.value == "High") {
+              columnData += ("<td><div class='bodymapcircle circleuQ3'></div>" + labelValue.value + "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"+"</td>");
+            } else if (labelValue.value == "Moderate") {
+              columnData += ("<td><div class='bodymapcircle circlemQ1'></div>" + labelValue.value +"&nbsp;&nbsp;&nbsp;&nbsp;"+ "</td>");
+            } else if (labelValue.value == "Low") {
+              columnData += ("<td><div class='bodymapcircle circleuQ1'></div>" + labelValue.value + "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"+"</td>");
+            } else if (labelValue.value == "Negative") {
+              columnData += ("<td><div class='bodymapcircle circleNA'></div>" + labelValue.value + "</td>");
+            }
+            if (j < values.length - 1)
+              columnData += " ";
+          }
+          //Putting the values of the element in a row of a table and appending it to the column data obtained
+          rowData += "<div id=''><table><tbody><span><i class='icon-plus'> </i></span><tr><td>" + element.rowLabel + " - " +"&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;" + columnData +"</tr></li></tbody></table></div>";
+          if (children) {
+            
+            var childrenData = '';
+            //recursive call for the children
+            var childValue = parseJSON(children);
+            rowData += "<div id=''><ul>" + childValue[childValue.length - 1] +"&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"+ "</ul>";
+          }
+          result.push(rowData);
+        }
+      }
+      return result;
+    }
+  </script>
+
+</body>
+
+</html>
