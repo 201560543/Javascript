@@ -103,7 +103,7 @@
       $("body").append("</tbody></table>");
     });
     //parseJSON function to parse the json which is obtained
-    //All the variables defined are in camelcase
+    
     function parseJSON(data) {
       var result = [];
       var rowData = "";
